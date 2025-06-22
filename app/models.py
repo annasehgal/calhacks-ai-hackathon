@@ -21,7 +21,6 @@ class LostPet(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     alt_text = db.Column(db.String(100), nullable=True)
-
     images = db.relationship('LostPetImage', backref='lost_pet', lazy=True, cascade='all, delete-orphan')
 
 
@@ -49,13 +48,18 @@ def create_ticket(mapper, connection, target):
     db.session.add(new_ticket)
     db.session.commit()
 
-
 class SpottedPiShot(db.Model):
+    __tablename__ = 'spotted_pi_shot'
+
     id = db.Column(db.Integer, primary_key=True)
     alt_text = db.Column(db.String(100), nullable=True)
     media_url = db.Column(db.String(255))
     ml_label_str = db.Column(db.String(255))
     ml_label_idx = db.Column(db.Integer)
+
+    def return_match(self):
+        return SpottedPetTicket.query.filter_by(petshot_id=self.id).first()
+
 
 
 class SpottedPetTicket(db.Model):
