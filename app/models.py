@@ -5,7 +5,7 @@ from flask_login import UserMixin
 
 
 class User(db.Model, UserMixin):
-    __tablename__ = 'user'  # optional, but can help avoid conflicts
+    __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
@@ -28,7 +28,7 @@ class LostPet(db.Model):
 class LostPetImage(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     lost_pet_id = db.Column(db.Integer, db.ForeignKey('lost_pet.id'), nullable=False)
-    image_path = db.Column(db.String(255), nullable=False)  # Path to uploaded image
+    image_path = db.Column(db.String(255), nullable=False)
 
 
 class SpottedPetShot(db.Model):
@@ -40,21 +40,22 @@ class SpottedPetShot(db.Model):
 
 @event.listens_for(SpottedPetShot, 'after_insert')
 def create_ticket(mapper, connection, target):
-    # Build a new Ticket instance manually using the low-level connection
-    new_ticket = Ticket(
+    new_ticket = SpottedPetTicket(
         user_id=target.user_id,
-        petshot_id=target.id,  # Assuming SpottedPetShot is used similarly to PetShot
+        petshot_id=target.id,
         status=Ticket.STATUS_U
     )
-    # Use session-level add via db.session (recommended)
+
     db.session.add(new_ticket)
     db.session.commit()
 
+
 class SpottedPiShot(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     alt_text = db.Column(db.String(100), nullable=True)
     image = db.Column(db.String(255))
+    ml_label_str = db.Column(db.String(255))
+    ml_label_idx = db.Column(db.Integer)
 
 
 class SpottedPetTicket(db.Model):
