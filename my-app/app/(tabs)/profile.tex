@@ -1,0 +1,259 @@
+import React, { useState } from 'react'
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Modal, TextInput, Alert } from 'react-native'
+import { ProfileHeader } from '../components/ProfileHeader'
+
+type UserProfile = {
+  name: string
+  email: string
+  phone: string
+  location: string
+  avatar: string
+  petsReported: number
+  petsFound: number
+  successfulReunions: number
+  joinDate: string
+}
+
+const mockProfile: UserProfile = {
+  name: 'John Smith',
+  email: 'john.smith@email.com',
+  phone: '+1 (555) 123-4567',
+  location: 'New York, NY',
+  avatar: 'https://i.pravatar.cc/150?img=5',
+  petsReported: 3,
+  petsFound: 2,
+  successfulReunions: 5,
+  joinDate: 'January 2024'
+}
+
+export default function Profile() {
+  const [profile, setProfile] = useState<UserProfile>(mockProfile)
+  const [showEditModal, setShowEditModal] = useState(false)
+  const [editedProfile, setEditedProfile] = useState<UserProfile>(mockProfile)
+
+  const handleSaveProfile = () => {
+    setProfile(editedProfile)
+    setShowEditModal(false)
+    Alert.alert('Success', 'Profile updated successfully!')
+  }
+
+  const StatCard = ({ title, value, color }: { title: string, value: number, color: string }) => (
+    <View style={[styles.statCard, { borderLeftColor: color }]}>
+      <Text style={styles.statValue}>{value}</Text>
+      <Text style={styles.statTitle}>{title}</Text>
+    </View>
+  )
+
+  const SettingItem = ({ title, subtitle, onPress }: { title: string, subtitle?: string, onPress: () => void }) => (
+    <TouchableOpacity style={styles.settingItem} onPress={onPress}>
+      <View style={styles.settingContent}>
+        <Text style={styles.settingTitle}>{title}</Text>
+        {subtitle && <Text style={styles.settingSubtitle}>{subtitle}</Text>}
+      </View>
+      <Text style={styles.settingArrow}>›</Text>
+    </TouchableOpacity>
+  )
+
+  return (
+    <ScrollView style={styles.container}>
+      <ProfileHeader 
+        name={profile.name}
+        email={profile.email}
+        avatar={profile.avatar}
+        onEditPress={() => {
+          setEditedProfile(profile)
+          setShowEditModal(true)
+        }}
+      />
+
+      <View style={styles.statsSection}>
+        <Text style={styles.sectionTitle}>My Activity</Text>
+        <View style={styles.statsContainer}>
+          <StatCard title="Pets Reported" value={profile.petsReported} color="#FF6B6B" />
+          <StatCard title="Pets Found" value={profile.petsFound} color="#4CAF50" />
+          <StatCard title="Reunions" value={profile.successfulReunions} color="#2196F3" />
+        </View>
+      </View>
+
+      <View style={styles.infoSection}>
+        <Text style={styles.sectionTitle}>Contact Information</Text>
+        <View style={styles.infoCard}>
+          <View style={styles.infoItem}>
+            <Text style={styles.infoLabel}>Phone</Text>
+            <Text style={styles.infoValue}>{profile.phone}</Text>
+          </View>
+          <View style={styles.infoItem}>
+            <Text style={styles.infoLabel}>Location</Text>
+            <Text style={styles.infoValue}>{profile.location}</Text>
+          </View>
+          <View style={styles.infoItem}>
+            <Text style={styles.infoLabel}>Member Since</Text>
+            <Text style={styles.infoValue}>{profile.joinDate}</Text>
+          </View>
+        </View>
+      </View>
+
+      <View style={styles.settingsSection}>
+        <Text style={styles.sectionTitle}>Settings</Text>
+        <View style={styles.settingsCard}>
+          <SettingItem 
+            title="Notifications" 
+            subtitle="Manage your notification preferences"
+            onPress={() => Alert.alert('Coming Soon', 'Notification settings will be available soon')}
+          />
+          <SettingItem 
+            title="Privacy" 
+            subtitle="Control your privacy settings"
+            onPress={() => Alert.alert('Coming Soon', 'Privacy settings will be available soon')}
+          />
+          <SettingItem 
+            title="Help & Support" 
+            subtitle="Get help or contact support"
+            onPress={() => Alert.alert('Support', 'Email us at support@petfinder.com')}
+          />
+          <SettingItem 
+            title="About" 
+            subtitle="App version and information"
+            onPress={() => Alert.alert('Pet Finder', 'Version 1.0.0\nHelping reunite pets with their families')}
+          />
+        </View>
+      </View>
+
+      {/* Edit Profile Modal */}
+      <Modal visible={showEditModal} animationType="slide" presentationStyle="pageSheet">
+        <View style={styles.modalContainer}>
+          <View style={styles.modalHeader}>
+            <TouchableOpacity onPress={() => setShowEditModal(false)}>
+              <Text style={styles.modalCancel}>Cancel</Text>
+            </TouchableOpacity>
+            <Text style={styles.modalTitle}>Edit Profile</Text>
+            <TouchableOpacity onPress={handleSaveProfile}>
+              <Text style={styles.modalSave}>Save</Text>
+            </TouchableOpacity>
+          </View>
+          
+          <ScrollView style={styles.modalContent}>
+            <View style={styles.formGroup}>
+              <Text style={styles.formLabel}>Name</Text>
+              <TextInput
+                style={styles.formInput}
+                value={editedProfile.name}
+                onChangeText={(text) => setEditedProfile({...editedProfile, name: text})}
+              />
+            </View>
+            
+            <View style={styles.formGroup}>
+              <Text style={styles.formLabel}>Email</Text>
+              <TextInput
+                style={styles.formInput}
+                value={editedProfile.email}
+                onChangeText={(text) => setEditedProfile({...editedProfile, email: text})}
+                keyboardType="email-address"
+              />
+            </View>
+            
+            <View style={styles.formGroup}>
+              <Text style={styles.formLabel}>Phone</Text>
+              <TextInput
+                style={styles.formInput}
+                value={editedProfile.phone}
+                onChangeText={(text) => setEditedProfile({...editedProfile, phone: text})}
+                keyboardType="phone-pad"
+              />
+            </View>
+            
+            <View style={styles.formGroup}>
+              <Text style={styles.formLabel}>Location</Text>
+              <TextInput
+                style={styles.formInput}
+                value={editedProfile.location}
+                onChangeText={(text) => setEditedProfile({...editedProfile, location: text})}
+              />
+            </View>
+          </ScrollView>
+        </View>
+      </Modal>
+    </ScrollView>
+  )
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: '#f8f9fa' },
+  statsSection: { paddingHorizontal: 20, marginBottom: 24 },
+  sectionTitle: { fontSize: 20, fontWeight: 'bold', color: '#222', marginBottom: 16 },
+  statsContainer: { flexDirection: 'row', gap: 12 },
+  statCard: {
+    flex: 1,
+    backgroundColor: '#fff',
+    padding: 16,
+    borderRadius: 12,
+    borderLeftWidth: 4,
+    elevation: 2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4
+  },
+  statValue: { fontSize: 24, fontWeight: 'bold', color: '#222' },
+  statTitle: { fontSize: 12, color: '#666', marginTop: 4 },
+  infoSection: { paddingHorizontal: 20, marginBottom: 24 },
+  infoCard: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 20,
+    elevation: 2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4
+  },
+  infoItem: { marginBottom: 16 },
+  infoLabel: { fontSize: 14, color: '#666', marginBottom: 4 },
+  infoValue: { fontSize: 16, color: '#222', fontWeight: '500' },
+  settingsSection: { paddingHorizontal: 20, marginBottom: 40 },
+  settingsCard: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    overflow: 'hidden',
+    elevation: 2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4
+  },
+  settingItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0'
+  },
+  settingContent: { flex: 1 },
+  settingTitle: { fontSize: 16, color: '#222', fontWeight: '500' },
+  settingSubtitle: { fontSize: 14, color: '#666', marginTop: 2 },
+  settingArrow: { fontSize: 20, color: '#ccc' },
+  modalContainer: { flex: 1, backgroundColor: '#fff' },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingTop: 60,
+    paddingBottom: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee'
+  },
+  modalCancel: { color: '#666', fontSize: 16 },
+  modalTitle: { fontSize: 18, fontWeight: 'bold', color: '#222' },
+  modalSave: { color: '#FF6B6B', fontSize: 16, fontWeight: 'bold' },
+  modalContent: { flex: 1, paddingHorizontal: 20, paddingTop: 20 },
+  formGroup: { marginBottom: 20 },
+  formLabel: { fontSize: 16, color: '#222', marginBottom: 8, fontWeight: '500' },
+  formInput: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    fontSize: 16,
+    backgroundColor: '#fff'
+  }
+})
