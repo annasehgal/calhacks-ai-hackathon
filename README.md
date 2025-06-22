@@ -52,7 +52,7 @@ source ~/coral-venv/bin/activate
 
 ```bash
 pip install -r requirements.txt
-pip install tflite-runtime==2.5.0.post1
+pip install --extra-index-url https://google-coral.github.io/py-repo/ tflite-runtime
 pip install https://github.com/google-coral/pycoral/releases/download/v2.0.0/pycoral-2.0.0-cp39-cp39-linux_aarch64.whl
 ```
 
