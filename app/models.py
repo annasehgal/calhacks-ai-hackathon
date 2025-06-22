@@ -31,14 +31,26 @@ class LostPetImage(db.Model):
     image_path = db.Column(db.String(255), nullable=False)  # Path to uploaded image
 
 
-class FoundPetShot(db.Model):
+class SpottedPetShot(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     alt_text = db.Column(db.String(100), nullable=True)
     image = db.Column(db.String(255))
 
 
-class FoundPiShot(db.Model):
+@event.listens_for(SpottedPetShot, 'after_insert')
+def create_ticket(mapper, connection, target):
+    # Build a new Ticket instance manually using the low-level connection
+    new_ticket = Ticket(
+        user_id=target.user_id,
+        petshot_id=target.id,  # Assuming SpottedPetShot is used similarly to PetShot
+        status=Ticket.STATUS_U
+    )
+    # Use session-level add via db.session (recommended)
+    db.session.add(new_ticket)
+    db.session.commit()
+
+class SpottedPiShot(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     alt_text = db.Column(db.String(100), nullable=True)
