@@ -35,7 +35,7 @@ class SpottedPetShot(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     alt_text = db.Column(db.String(100), nullable=True)
-    image = db.Column(db.String(255))
+    media_url = db.Column(db.String(255))
 
 
 @event.listens_for(SpottedPetShot, 'after_insert')
@@ -53,7 +53,7 @@ def create_ticket(mapper, connection, target):
 class SpottedPiShot(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     alt_text = db.Column(db.String(100), nullable=True)
-    image = db.Column(db.String(255))
+    media_url = db.Column(db.String(255))
     ml_label_str = db.Column(db.String(255))
     ml_label_idx = db.Column(db.Integer)
 
