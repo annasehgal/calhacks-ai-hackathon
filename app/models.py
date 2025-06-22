@@ -16,23 +16,24 @@ class User(db.Model, UserMixin):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+
 class LostPet(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    name = db.Column(db.String(100), nullable=False)
+    alt_text = db.Column(db.String(100), nullable=True)
 
 
 class PetShot(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    name = db.Column(db.String(100), nullable=False)
+    alt_text = db.Column(db.String(100), nullable=True)
     image = db.Column(db.String(255))
 
 
 class FoundPiShot(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    name = db.Column(db.String(100), nullable=False)
+    alt_text = db.Column(db.String(100), nullable=True)
     image = db.Column(db.String(255))
 
 
