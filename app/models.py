@@ -22,8 +22,16 @@ class LostPet(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     alt_text = db.Column(db.String(100), nullable=True)
 
+    images = db.relationship('LostPetImage', backref='lost_pet', lazy=True, cascade='all, delete-orphan')
 
-class PetShot(db.Model):
+
+class LostPetImage(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    lost_pet_id = db.Column(db.Integer, db.ForeignKey('lost_pet.id'), nullable=False)
+    image_path = db.Column(db.String(255), nullable=False)  # Path to uploaded image
+
+
+class FoundPetShot(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     alt_text = db.Column(db.String(100), nullable=True)

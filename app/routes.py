@@ -66,3 +66,24 @@ def logout():
 @login_required
 def dashboard():
     return f'Hello, {current_user.username}!'
+
+
+@bp.route('/upload_images/<int:pet_id>', methods=['POST'])
+def upload_images(pet_id):
+    pet = LostPet.query.get_or_404(pet_id)
+    files = request.files.getlist('images')
+
+    existing_count = len(pet.images)
+    if existing_count + len(files) > 50:
+        return "Cannot upload more than 50 images.", 400
+
+    for file in files:
+        filename = secure_filename(file.filename)
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(file_path)
+
+        new_image = LostPetImage(lost_pet_id=pet.id, image_path=filename)
+        db.session.add(new_image)
+
+    db.session.commit()
+    return redirect(url_for('main.view_pet', pet_id=pet.id))
