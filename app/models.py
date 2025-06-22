@@ -57,7 +57,7 @@ class SpottedPiShot(db.Model):
     image = db.Column(db.String(255))
 
 
-class Ticket(db.Model):
+class SpottedPetTicket(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     petshot_id = db.Column(db.Integer, db.ForeignKey('pet_shot.id'), nullable=False)

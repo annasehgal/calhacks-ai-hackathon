@@ -1,5 +1,9 @@
 from flask import Blueprint, jsonify
 from .models import Ticket, db
+from flask import render_template, redirect, url_for, flash, request
+from flask_login import login_user, logout_user, login_required, current_user
+from .models import User
+from .forms import LoginForm, SignupForm
 
 bp = Blueprint('main', __name__)
 
@@ -14,14 +18,6 @@ def set_ticket_false(id):
     ticket = Ticket.query.get_or_404(id)
     ticket.set_false()
     return jsonify({'status': ticket.status})
-
-
-from flask import Blueprint, render_template, redirect, url_for, flash, request
-from flask_login import login_user, logout_user, login_required, current_user
-from .models import db, User
-from .forms import LoginForm, SignupForm
-
-bp = Blueprint('main', __name__)
 
 
 @bp.route('/signup', methods=['GET', 'POST'])
