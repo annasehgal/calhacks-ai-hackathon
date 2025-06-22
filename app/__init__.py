@@ -30,3 +30,4 @@ def create_app():
                                                  SpottedPetShot)
         db.create_all()
     return app
+
