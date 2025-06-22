@@ -25,7 +25,8 @@ def create_app():
     def load_user(user_id):
         return User.query.get(int(user_id))
 
-    if app.app_context():
+    with app.app_context():
         from backend.api.database.models import (SpottedPiShot, SpottedPetTicket, LostPet, LostPetImage, User,
                                                  SpottedPetShot)
+        db.create_all()
     return app
